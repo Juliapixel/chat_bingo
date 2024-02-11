@@ -9,6 +9,14 @@ alias rb := run_backend
 run_backend profile="dev" args="":
     cargo run --manifest-path ./backend/Cargo.toml --profile {{profile}} -- {{args}}
 
+alias tb := test_backend
+test_backend $RUST_BACKTRACE="1":
+    cargo test --manifest-path ./backend/Cargo.toml
+
+alias cb := clean_backend
+clean_backend:
+    cargo clean --manifest-path ./backend/Cargo.toml
+
 alias bw := build_web
 build_web:
     cd ./web && npm install && npm run build
