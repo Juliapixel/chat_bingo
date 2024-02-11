@@ -1,4 +1,4 @@
-use actix_web::middleware::Logger;
+use actix_web::{middleware::Logger, web};
 use env_logger::Env;
 use log::info;
 
@@ -25,5 +25,6 @@ async fn main() {
     actix_web::HttpServer::new(|| {
         actix_web::App::new()
             .wrap(Logger::default())
+            .service(web::resource("/").to(|| async { "Hello, world!" }))
     }).bind(("127.0.0.1", 8080)).unwrap().run().await.unwrap();
 }
