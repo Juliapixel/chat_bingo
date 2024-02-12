@@ -35,6 +35,14 @@ impl WebsocketTxRxDistributer {
         }
     }
 
+    pub fn get_pair(&self, ulid: Ulid) -> Option<(Receiver<ServerEvent>, Sender<ClientEvent>)> {
+        if let (Some(rx), Some(tx)) = (self.get_listener(ulid), self.get_sender(ulid)) {
+            return Some((rx, tx));
+        } else {
+            return None
+        }
+    }
+
     pub fn get_listener(&self, ulid: Ulid) -> Option<Receiver<ServerEvent>> {
         self.listeners.read().get(&ulid).map(|l| l.resubscribe())
     }
