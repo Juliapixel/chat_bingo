@@ -1,4 +1,14 @@
-bingo for twitch streamers and their chats
+# Bingo for Twitch streamers and their chats
+### Currently WIP
+
+Front-end built using ASP.NET/Blazor
+Back-end built with Rust
 
 
-hi julia pag
+
+Planned Features
+-
+<img src='assets/milton.png'>
+
+---
+_hi julia pag_
