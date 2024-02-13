@@ -19,8 +19,8 @@ clean_backend:
 
 alias bw := build_web
 build_web:
-    cd ./web && npm install && npm run build
+    cd ./blazor && dotnet build
 
 alias rw := run_web
 run_web:
-    cd ./web && npm install && npm run dev
+    cd ./blazor/chat_bingo_frontend && dotnet run
