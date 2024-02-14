@@ -1,3 +1,10 @@
 .env
 .vscode/
 .vs/
+artifacts/
+bin/
+obj/
+.dotnet/
+.nuget/
+.packages/
+.tools/
