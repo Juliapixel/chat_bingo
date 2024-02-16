@@ -43,7 +43,6 @@ async fn main() {
 
     info!("connecting to database...");
 
-    // FIXME: remove expect()s
     let db_pool = Data::new(sqlx::PgPool::connect_with(
         sqlx::postgres::PgConnectOptions::default()
             .database(&args.pg_args.database)
