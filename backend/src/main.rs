@@ -2,15 +2,20 @@ use std::time::Duration;
 
 use actix_web::{middleware::{Compress, DefaultHeaders, Logger}, web::{self, Data}};
 use bingo_backend::{auth::TwitchAuth, game::{self, manager::GamesManager}, websocket};
+use clap::Parser;
 use env_logger::Env;
 use log::{error, info};
 use sqlx::ConnectOptions;
+
+use crate::cli::Arguments;
 
 #[cfg(feature="swagger-ui")]
 use {
     utoipa::OpenApi,
     utoipa_swagger_ui::SwaggerUi
 };
+
+mod cli;
 
 const DEFAULT_LEVEL: &'static str = {
     #[cfg(debug_assertions)]
@@ -25,6 +30,10 @@ const DEFAULT_LEVEL: &'static str = {
 
 #[tokio::main]
 async fn main() {
+    let _ = dotenvy::dotenv_override();
+
+    let args = Arguments::parse();
+
     env_logger::init_from_env(
         Env::new()
             .filter_or("BINGO_LOG", DEFAULT_LEVEL)
@@ -37,11 +46,11 @@ async fn main() {
     // FIXME: remove expect()s
     let db_pool = Data::new(sqlx::PgPool::connect_with(
         sqlx::postgres::PgConnectOptions::default()
-            .database("bingo")
-            .port(dotenvy::var("POSTGRES_PORT").unwrap_or("5432".into()).parse().expect("port should be a number dumbass"))
-            .host(&dotenvy::var("POSTGRES_HOST").unwrap_or("localhost".into()))
-            .username("postgres")
-            .password(&dotenvy::var("POSTGRES_PASSWORD").unwrap())
+            .database(&args.pg_args.database)
+            .port(args.pg_args.pg_port)
+            .host(&args.pg_args.pg_host)
+            .username(&args.pg_args.username)
+            .password(&args.pg_args.password)
             .log_slow_statements(log::LevelFilter::Warn, Duration::from_millis(300))
     ).await.expect("failed to connect to db erm"));
 
@@ -79,5 +88,5 @@ async fn main() {
         );
 
         return app
-    }).bind(("127.0.0.1", 8080)).unwrap().run().await.unwrap();
+    }).bind(("127.0.0.1", args.port)).unwrap().run().await.unwrap();
 }
