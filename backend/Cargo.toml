@@ -19,18 +19,18 @@ log = "0.4"
 thiserror = "1.0"
 env_logger = "0.11"
 tokio = { version = "1.36", features = ["full"] }
-hashbrown = { version = "0.14.3", features = ["serde"] }
-ulid = { version = "1.1.2", features = ["serde", "uuid"] }
-parking_lot = { version = "0.12.1", features = ["serde"] }
-either = { version = "1.10.0", features = ["serde"] }
+hashbrown = { version = "0.14", features = ["serde"] }
+ulid = { version = "1.1", features = ["serde", "uuid"] }
+parking_lot = { version = "0.12", features = ["serde"] }
+either = { version = "1.10", features = ["serde"] }
 mime = "0.3"
 rand = "0.8"
 sqlx = { version = "0.7", features = ["postgres", "chrono", "uuid", "runtime-tokio"] }
-dotenvy = "0.15.7"
-utoipa = { version = "4.2.0", features = ["actix_extras", "ulid", "rc_schema"], optional = true }
-utoipa-swagger-ui = { version = "6.0.0", features = ["actix-web"], optional = true }
-clap = { version = "4.5.0", features = ["derive", "env", "cargo"] }
-url = { version = "2.5.0", features = ["serde"] }
+dotenvy = "0.15"
+utoipa = { version = "4.2", features = ["actix_extras", "ulid", "rc_schema"], optional = true }
+utoipa-swagger-ui = { version = "6.0", features = ["actix-web"], optional = true }
+clap = { version = "4.5", features = ["derive", "env", "cargo"] }
+url = { version = "2.5", features = ["serde"] }
 
 [features]
 swagger-ui = ["dep:utoipa", "dep:utoipa-swagger-ui"]
