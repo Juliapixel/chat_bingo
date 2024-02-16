@@ -30,7 +30,7 @@ const DEFAULT_LEVEL: &'static str = {
 
 #[tokio::main]
 async fn main() {
-    let _ = dotenvy::dotenv_override();
+    let _ = dotenvy::dotenv();
 
     let args = Arguments::parse();
 
