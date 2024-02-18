@@ -64,7 +64,7 @@ impl ResponseError for CreateError {
         (status = 400, description = "The request to create a game was invalid", body = CreateError)
     )
 ))]
-pub async fn create_game(req: HttpRequest, game: Json<CreateGameRequest>) -> Result<Json<CreatedGame>, CreateError> {
+pub async fn create_game(req: HttpRequest, game: Json<CreateGameRequest>, games_manager: Data<GamesManager>) -> Result<Json<CreatedGame>, CreateError> {
     match game.size {
         x if x > 23  => return Err(CreateError::TooBig),
         x if x < 5 => return Err(CreateError::TooSmall),
@@ -72,13 +72,12 @@ pub async fn create_game(req: HttpRequest, game: Json<CreateGameRequest>) -> Res
         x if game.items.len() < x.pow(2) as usize => return Err(CreateError::NotEnoughItems),
         _ => ()
     };
-    let games = req.app_data::<Data<GamesManager>>().unwrap();
 
     let ulid = Ulid::new();
 
     let items: Box<[Item]> = game.0.items.into_iter().map(|i| i.into()).collect();
 
-    games.new_game(Game::new(ulid, game.0.size, items));
+    games_manager.new_game(Game::new(ulid, game.0.size, items));
 
-    return Ok(Json(CreatedGame { id: ulid }))
+    return Ok(Json(CreatedGame { id: ulid }));
 }
