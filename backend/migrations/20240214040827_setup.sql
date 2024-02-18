@@ -13,9 +13,10 @@ CREATE TABLE games (
 
 CREATE TABLE users (
     id serial PRIMARY KEY,
-    user_id uuid,
+    user_id uuid NOT NULL,
     twitch_id text NOT NULL UNIQUE,
     twitch_login text NOT NULL UNIQUE,
+    twitch_display_name text NOT NULL UNIQUE,
     twitch_token text
 );
 
@@ -26,4 +27,4 @@ CREATE TABLE players (
     items integer[]
 );
 
-CREATE INDEX players_twitch_id_game_id on players (user_id, game_id);
+-- CREATE INDEX players_twitch_id_game_id on players (user_id, game_id);

@@ -1,3 +1,4 @@
+use bingo_backend::app_info::AppInfo;
 use clap::{Args, Parser};
 
 #[derive(Parser)]
@@ -6,6 +7,8 @@ pub struct Arguments {
     pub port: u16,
     #[command(flatten)]
     pub pg_args: PgArgs,
+    #[command(flatten)]
+    pub app_info: AppInfo
 }
 
 #[derive(Args)]

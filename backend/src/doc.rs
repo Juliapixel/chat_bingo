@@ -1,5 +1,5 @@
 use utoipa::{Modify, OpenApi};
-use crate::{game::{create, get, update}, websocket};
+use crate::{game::{create, get, update}, websocket, auth};
 
 
 #[derive(OpenApi)]
@@ -10,7 +10,8 @@ use crate::{game::{create, get, update}, websocket};
     paths(
         create::create_game,
         get::get_game,
-        websocket::websocket
+        websocket::websocket,
+        auth::twitch_auth
     ),
     components(
         schemas(

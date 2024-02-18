@@ -3,11 +3,9 @@ use std::{future::Future, pin::Pin};
 use actix_web::dev::{Service, ServiceRequest, ServiceResponse, Transform};
 
 #[derive(Debug, Clone, Default)]
-pub struct TwitchAuth {
+pub struct TwitchAuthMiddleware();
 
-}
-
-impl<S, B> Transform<S, ServiceRequest> for TwitchAuth
+impl<S, B> Transform<S, ServiceRequest> for TwitchAuthMiddleware
 where
     S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = actix_web::Error> + 'static
 {
@@ -40,6 +38,9 @@ where
 
     // TODO: check if the given token is valid
     fn call(&self, req: ServiceRequest) -> Self::Future {
-        Box::pin(self.service.call(req))
+        let fut = self.service.call(req);
+        Box::pin(async move {
+            fut.await
+        })
     }
 }
