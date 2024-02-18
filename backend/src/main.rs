@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{net::Ipv4Addr, time::Duration};
 
 use actix_web::{middleware::{Compress, DefaultHeaders, Logger}, web::{self, Data}};
 use bingo_backend::{auth::{self, TwitchAuthMiddleware}, game::{self, manager::GamesManager}, websocket};
@@ -25,6 +25,17 @@ const DEFAULT_LEVEL: &'static str = {
     #[cfg(not(debug_assertions))]
     {
         "INFO"
+    }
+};
+
+const BIND_ADDRESS: Ipv4Addr = {
+    #[cfg(debug_assertions)]
+    {
+        Ipv4Addr::LOCALHOST
+    }
+    #[cfg(not(debug_assertions))]
+    {
+        Ipv4Addr::UNSPECIFIED
     }
 };
 
@@ -100,5 +111,5 @@ async fn main() {
         );
 
         return app
-    }).bind(("127.0.0.1", args.port)).unwrap().run().await.unwrap();
+    }).bind((BIND_ADDRESS, args.port)).unwrap().run().await.unwrap();
 }
