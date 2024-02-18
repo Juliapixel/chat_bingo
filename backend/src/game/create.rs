@@ -1,4 +1,4 @@
-use actix_web::{web::{Data, Json}, HttpRequest, HttpResponse, ResponseError};
+use actix_web::{web::{Data, Json}, HttpRequest, HttpResponseBuilder, ResponseError};
 use serde::{Deserialize, Serialize};
 use ulid::Ulid;
 
@@ -40,11 +40,7 @@ impl ResponseError for CreateError {
     }
 
     fn error_response(&self) -> actix_web::HttpResponse<actix_web::body::BoxBody> {
-        let resp = HttpResponse::new(self.status_code())
-            .set_body(serde_json::to_string(self).unwrap())
-            .map_into_boxed_body();
-
-        return resp;
+        HttpResponseBuilder::new(self.status_code()).json(self)
     }
 }
 
