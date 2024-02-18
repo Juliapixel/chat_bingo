@@ -3,6 +3,7 @@
 
 #![warn(clippy::unwrap_used)]
 #![warn(clippy::expect_used)]
+#![allow(clippy::needless_return)]
 
 pub mod event;
 pub mod game;
