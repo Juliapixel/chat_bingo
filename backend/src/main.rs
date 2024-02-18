@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use actix_web::{middleware::{Compress, DefaultHeaders, Logger}, web::{self, Data}};
-use bingo_backend::{app_info::AppInfo, auth::{self, TwitchAuthMiddleware}, game::{self, manager::GamesManager}, websocket};
+use bingo_backend::{auth::{self, TwitchAuthMiddleware}, game::{self, manager::GamesManager}, websocket};
 use clap::Parser;
 use env_logger::Env;
 use log::{error, info};

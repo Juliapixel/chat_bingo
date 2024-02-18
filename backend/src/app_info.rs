@@ -1,5 +1,4 @@
 use clap::Args;
-use reqwest::redirect;
 
 #[derive(Clone, Args)]
 pub struct AppInfo {

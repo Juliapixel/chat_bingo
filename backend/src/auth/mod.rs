@@ -3,8 +3,6 @@ pub mod twitch;
 pub mod jwt;
 pub mod error;
 
-use std::str::FromStr;
-
 use actix_web::{
     cookie::CookieBuilder,
     http::StatusCode,
@@ -58,7 +56,7 @@ type TwitchParamsQuery = Either<Query<TwitchAuthParamsSuccess>, Query<TwitchAuth
     )
 ))]
 pub async fn twitch_auth(
-    req: HttpRequest,
+    _req: HttpRequest,
     params: TwitchParamsQuery,
     db_pool: Data<PgPool>,
     app_info: Data<AppInfo>
@@ -98,12 +96,8 @@ pub async fn twitch_auth(
                     .cookie(cookie).finish()
             );
         },
-        Either::Right(error) => {
+        Either::Right(_error) => {
             return Ok(HttpResponseBuilder::new(StatusCode::FORBIDDEN).finish());
         },
     }
-}
-
-fn store_user(pool: &PgPool) {
-
 }
