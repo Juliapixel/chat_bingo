@@ -31,7 +31,13 @@ pub struct Game {
 
 impl Game {
     pub fn new(id: Ulid, size: u32, items: Box<[Item]>) -> Self {
-        assert!(items.len() >= (size * size) as usize, "there must be at least {} items in a board of size {}, but there were only {}", size.pow(2), size, items.len());
+        assert!(
+            items.len() >= (size * size) as usize,
+            "there must be at least {} items in a board of size {}, but there were only {}",
+            size.pow(2),
+            size,
+            items.len()
+        );
         let (tx, _rx) = tokio::sync::broadcast::channel(8);
         Self {
             id,
