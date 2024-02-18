@@ -1,5 +1,18 @@
+use std::sync::OnceLock;
+
 use bingo_backend::app_info::AppInfo;
 use clap::{Args, Parser};
+
+/// returns a lazily initiated global instance of [Arguments]
+pub fn args() -> &'static Arguments {
+    static ARGS: OnceLock<Arguments> = OnceLock::new();
+
+    ARGS.get_or_init(|| {
+        let _ = dotenvy::dotenv();
+
+        Arguments::parse()
+    })
+}
 
 #[derive(Parser)]
 pub struct Arguments {

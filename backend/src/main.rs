@@ -2,12 +2,9 @@ use std::{net::Ipv4Addr, time::Duration};
 
 use actix_web::{middleware::{Compress, DefaultHeaders, Logger}, web::{self, Data}};
 use bingo_backend::{auth::{self, TwitchAuthMiddleware}, game::{self, manager::GamesManager}, websocket};
-use clap::Parser;
 use env_logger::Env;
 use log::{error, info};
 use sqlx::ConnectOptions;
-
-use crate::cli::Arguments;
 
 #[cfg(feature="swagger-ui")]
 use {
@@ -41,9 +38,7 @@ const BIND_ADDRESS: Ipv4Addr = {
 
 #[tokio::main]
 async fn main() {
-    let _ = dotenvy::dotenv();
-
-    let args = Arguments::parse();
+    let args = cli::args();
 
     env_logger::init_from_env(
         Env::new()
@@ -90,7 +85,7 @@ async fn main() {
         docs
     };
 
-    let app_info = Data::new(args.app_info);
+    let app_info = Data::new(args.app_info.clone());
 
     actix_web::HttpServer::new(move || {
         let app = actix_web::App::new()
