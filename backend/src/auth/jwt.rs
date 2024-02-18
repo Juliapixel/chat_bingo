@@ -63,6 +63,5 @@ impl Claims {
 }
 
 pub fn create_new_jwt(claims: Claims) -> String {
-    let token = jsonwebtoken::encode(&Header::default(), &claims, &EncodingKey::from_secret(get_jwt_secret())).unwrap();
-    return token;
+    jsonwebtoken::encode(&Header::default(), &claims, &EncodingKey::from_secret(get_jwt_secret())).unwrap()
 }
