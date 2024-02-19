@@ -6,8 +6,8 @@ build_backend profile="dev":
     cargo build --manifest-path ./backend/Cargo.toml --profile {{profile}}
 
 alias rb := run_backend
-run_backend profile="dev" args="":
-    cargo run --manifest-path ./backend/Cargo.toml --profile {{profile}} -- {{args}}
+run_backend profile="dev" *ARGS="":
+    cd ./backend && cargo run --profile {{profile}} -- {{ARGS}}
 
 alias tb := test_backend
 test_backend $RUST_BACKTRACE="1":
