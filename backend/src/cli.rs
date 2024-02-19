@@ -29,9 +29,9 @@ pub struct Arguments {
 
 #[derive(Args)]
 pub struct PgArgs {
-    #[arg(long, env="PG_HOST", default_value = "localhost")]
+    #[arg(long, env="PG_HOST")]
     pub pg_host: String,
-    #[arg(long, env="PG_PORT", default_value = "5432")]
+    #[arg(long, env="PG_PORT")]
     pub pg_port: u16,
     #[arg(long, env="PG_DB", default_value = "bingo")]
     pub database: String,
