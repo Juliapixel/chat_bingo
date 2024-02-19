@@ -17,6 +17,9 @@ alias cb := clean_backend
 clean_backend:
     cargo clean --manifest-path ./backend/Cargo.toml
 
+build_backend_image:
+    cd ./backend && docker build -t bingo_backend .
+
 alias bw := build_web
 build_web:
     cd ./blazor && dotnet build
