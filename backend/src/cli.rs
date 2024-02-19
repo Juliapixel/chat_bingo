@@ -18,6 +18,9 @@ pub fn args() -> &'static Arguments {
 pub struct Arguments {
     #[arg(short, long, default_value = "8080")]
     pub port: u16,
+    /// whether X-Forwaded-For headers are trusted or not
+    #[arg(long, env="REVERSE_PROXY_MODE")]
+    pub reverse_proxy_mode: bool,
     #[command(flatten)]
     pub pg_args: PgArgs,
     #[command(flatten)]

@@ -87,6 +87,11 @@ async fn main() {
 
     let app_info = Data::new(args.app_info.clone());
 
+    let logger_format = match args.reverse_proxy_mode {
+        true => "%ra | %r | %s",
+        false => "%a | %r | %s",
+    };
+
     actix_web::HttpServer::new(move || {
         let app = actix_web::App::new()
             .app_data(app_info.clone())
@@ -94,7 +99,7 @@ async fn main() {
             .app_data(db_pool.clone())
             .wrap(Compress::default())
             .wrap(TwitchAuthMiddleware::default())
-            .wrap(Logger::default())
+            .wrap(Logger::new(logger_format))
             .wrap(DefaultHeaders::new().add(("Server", "actix-web")))
             .service(web::resource("/ws").get(websocket::websocket))
             .service(web::resource("/twitch_auth").get(auth::twitch_auth))
