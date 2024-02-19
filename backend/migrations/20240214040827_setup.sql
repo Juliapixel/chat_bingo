@@ -16,14 +16,24 @@ CREATE TABLE users (
     user_id uuid NOT NULL,
     twitch_id text NOT NULL UNIQUE,
     twitch_login text NOT NULL UNIQUE,
-    twitch_display_name text NOT NULL UNIQUE,
-    twitch_token text
+    twitch_display_name text NOT NULL UNIQUE
 );
+
+CREATE TABLE twitch_tokens (
+    id serial PRIMARY KEY,
+    user_id integer NOT NULL UNIQUE REFERENCES users (id) ON DELETE CASCADE,
+    token text NOT NULL,
+    issued_at timestamp with time zone NOT NULL,
+    expires_at timestamp with time zone NOT NULL,
+    refresh_token text NOT NULL
+);
+
+CREATE INDEX expires_at ON twitch_tokens (expires_at);
 
 CREATE TABLE players (
     id serial PRIMARY KEY,
-    user_id integer NOT NULL REFERENCES users (id),
-    game_id integer NOT NULL REFERENCES games (id),
+    user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    game_id integer NOT NULL REFERENCES games (id) ON DELETE CASCADE,
     items integer[]
 );
 

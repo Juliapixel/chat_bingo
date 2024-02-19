@@ -12,13 +12,14 @@ use actix_web::{
     HttpResponse,
     HttpResponseBuilder
 };
+use chrono::Utc;
 pub use middleware::TwitchAuthMiddleware;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use twitch_api::twitch_oauth2::{TwitchToken, UserToken};
 use ulid::Ulid;
 
-use crate::{app_info::AppInfo, auth::jwt::{create_new_jwt, Claims}, user::User};
+use crate::{app_info::AppInfo, auth::jwt::{create_new_jwt, Claims}, user::{self, User}};
 
 use self::error::TwitchAuthError;
 
@@ -78,9 +79,17 @@ pub async fn twitch_auth(
 
             let expiration = token.expires_in();
 
-            let mut user = User::new(Ulid::new(), token.user_id, token.login, display_name, token.access_token);
+            let mut user = User::new(Ulid::new(), token.user_id, token.login, display_name);
 
             user.upsert(&**db_pool).await.unwrap();
+
+            let now = Utc::now();
+            user::TwitchToken::new(
+                token.access_token,
+                now,
+                now + expiration,
+                token.refresh_token.unwrap()
+            ).upsert_for_ulid(user.user_id.into()).execute(&**db_pool).await.unwrap();
 
             let jwt = tokio::task::spawn_blocking(move || {create_new_jwt(Claims::new(user.user_id.into(), jwt::UserKind::Player, expiration))}).await.unwrap();
 
