@@ -1,8 +1,12 @@
 FROM rust:latest as build
 
 WORKDIR /app
-COPY . .
+COPY ./Cargo.* .
+RUN mkdir src && echo "fn main() {}" > src/main.rs
 RUN cargo fetch
+RUN cargo build -r
+RUN rm src/main.rs
+COPY . .
 RUN cargo build -r
 
 FROM debian:bookworm
