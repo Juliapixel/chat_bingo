@@ -1,22 +1,34 @@
 use std::{sync::OnceLock, time::Duration};
 
 use base64::Engine;
-use jsonwebtoken::{EncodingKey, Header};
+use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, TokenData, Validation};
 use serde::{Deserialize, Serialize};
 use ulid::Ulid;
 
-fn get_jwt_secret() -> &'static [u8] {
-    static SECRET: OnceLock<Vec<u8>> = OnceLock::new();
+fn get_jwt_secret() -> &'static (EncodingKey, DecodingKey) {
+    static SECRET: OnceLock<(EncodingKey, DecodingKey)> = OnceLock::new();
 
     SECRET.get_or_init(|| {
         #[cfg(debug_assertions)]
         {
-            base64::prelude::BASE64_STANDARD.decode(dotenvy::var("JWT_SECRET").unwrap()).unwrap()
+            let secret = base64::prelude::BASE64_STANDARD.decode(dotenvy::var("JWT_SECRET").unwrap()).unwrap();
+            (
+                EncodingKey::from_secret(&secret),
+                DecodingKey::from_secret(&secret)
+            )
         }
         #[cfg(not(debug_assertions))]
         {
             todo!("HELPPPP")
         }
+    })
+}
+
+fn get_jwt_validation() -> &'static Validation {
+    static VALIDATION: OnceLock<Validation> = OnceLock::new();
+
+    VALIDATION.get_or_init(||{
+        Validation::new(Algorithm::default())
     })
 }
 
@@ -63,5 +75,10 @@ impl Claims {
 }
 
 pub fn create_new_jwt(claims: Claims) -> String {
-    jsonwebtoken::encode(&Header::default(), &claims, &EncodingKey::from_secret(get_jwt_secret())).unwrap()
+    jsonwebtoken::encode(&Header::default(), &claims, &get_jwt_secret().0)
+        .expect("failed to encode JWT token")
+}
+
+pub fn validate_jwt(token: &str) -> Result<TokenData<Claims>, jsonwebtoken::errors::Error>{
+    jsonwebtoken::decode(token, &get_jwt_secret().1, get_jwt_validation())
 }
