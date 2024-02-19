@@ -81,7 +81,7 @@ pub async fn twitch_auth(
 
             let mut user = User::new(Ulid::new(), token.user_id, token.login, display_name);
 
-            user.upsert(&**db_pool).await.unwrap();
+            user.upsert(&**db_pool).await?;
 
             let now = Utc::now();
             user::TwitchToken::new(
@@ -89,7 +89,7 @@ pub async fn twitch_auth(
                 now,
                 now + expiration,
                 token.refresh_token.unwrap()
-            ).upsert_for_ulid(user.user_id.into()).execute(&**db_pool).await.unwrap();
+            ).upsert_for_ulid(user.user_id.into()).execute(&**db_pool).await?;
 
             let jwt = tokio::task::spawn_blocking(move || {create_new_jwt(Claims::new(user.user_id.into(), jwt::UserKind::Player, expiration))}).await.unwrap();
 

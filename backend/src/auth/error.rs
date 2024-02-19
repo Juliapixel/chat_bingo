@@ -10,6 +10,8 @@ use twitch_api::{helix::ClientRequestError, twitch_oauth2::tokens::errors::UserT
 pub enum TwitchAuthError {
     #[error("the user denied our authorization request")]
     AuthorizationDenied,
+    #[error("error when querying stuff from the database")]
+    DatabaseError,
     #[error("twitch returned an invalid response: {0}")]
     #[serde(untagged)]
     BadResponseFromTwitch(&'static str),
@@ -20,6 +22,7 @@ impl ResponseError for TwitchAuthError {
         match self {
             TwitchAuthError::BadResponseFromTwitch(_) => StatusCode::BAD_GATEWAY,
             TwitchAuthError::AuthorizationDenied => StatusCode::BAD_REQUEST,
+            _ => StatusCode::INTERNAL_SERVER_ERROR
         }
     }
 
@@ -39,5 +42,11 @@ impl<T: std::error::Error + Sync + Send> From<ClientRequestError<T>> for TwitchA
     fn from(value: ClientRequestError<T>) -> Self {
         error!("failed requesting display name from twitch: {value:?}");
         TwitchAuthError::BadResponseFromTwitch("failed requesting display name from twitch")
+    }
+}
+
+impl From<sqlx::Error> for TwitchAuthError {
+    fn from(value: sqlx::Error) -> Self {
+        Self::DatabaseError
     }
 }
