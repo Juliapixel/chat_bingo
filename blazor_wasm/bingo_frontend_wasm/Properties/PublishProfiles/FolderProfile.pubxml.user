@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\User\OneDrive\Visual Studio Source\source\repos\chat_bingo\blazor_wasm\bingo_frontend_wasm\bin\Release\net8.0\browser-wasm\publish\</_PublishTargetUrl>
+    <History>True|2024-02-20T02:32:36.4269446Z||;True|2024-02-19T18:32:21.6440471-08:00||;True|2024-02-19T18:32:08.7559365-08:00||;False|2024-02-19T18:31:19.0157840-08:00||;False|2024-02-19T18:30:46.0517131-08:00||;True|2024-02-19T16:59:27.2793780-08:00||;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>
