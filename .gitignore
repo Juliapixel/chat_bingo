@@ -8,3 +8,7 @@ obj/
 .nuget/
 .packages/
 .tools/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
