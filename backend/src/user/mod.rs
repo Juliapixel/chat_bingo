@@ -1,5 +1,4 @@
 use chrono::{DateTime, Utc};
-use log::error;
 use sqlx::{postgres::PgArguments, prelude::FromRow, query::{Query, QueryAs}, Executor, Postgres};
 use ulid::Ulid;
 use uuid::Uuid;
