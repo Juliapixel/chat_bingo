@@ -99,7 +99,7 @@ impl TwitchToken {
             twitch_tokens.refresh_token
         ) FROM twitch_tokens
         INNER JOIN users ON twitch_tokens.user_id = users.id
-        WHERE users.user_id=$1").bind(Uuid::from(ulid))
+        WHERE users.user_id=$1;").bind(Uuid::from(ulid))
     }
 
     pub fn upsert_for_ulid(&self, ulid: Ulid) -> Query<'_, Postgres, PgArguments> {
@@ -117,7 +117,7 @@ impl TwitchToken {
         SET token = $1,
         issued_at = $2,
         expires_at = $3,
-        refresh_token = $4")
+        refresh_token = $4;")
             .bind(&self.token)
             .bind(self.issued_at)
             .bind(self.expires_at)
