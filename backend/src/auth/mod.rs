@@ -51,12 +51,14 @@ pub struct TwitchAuthParamsError {
 
 type TwitchParamsQuery = Either<Query<TwitchAuthParamsSuccess>, Query<TwitchAuthParamsError>>;
 
-/// this should only ever be used by twitch, in order to send us the data necessary to acquire an user access token from them
+/// this is the redirect URI twitch will send users to after they authorize the app
 ///
-/// https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow
+/// more info on how this works:
+/// [Authorization Code Grant Flow](https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow)
 #[cfg_attr(feature = "swagger-ui", utoipa::path(
     post,
     path = "/twitch_auth",
+    tag = "Auth",
     responses(
         (status = 200, headers(("Set-Cookie" = String, description = "the user's app-specific JWT token"))),
         (status = 403)

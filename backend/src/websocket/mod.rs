@@ -87,6 +87,7 @@ impl ResponseError for WsRequestError {
 #[cfg_attr(feature = "swagger-ui", utoipa::path(
     get,
     path = "/ws",
+    tag = "Game",
     params(WsParams),
     responses(
         (status = 101, description = "Upgrading connection to a websocket"),

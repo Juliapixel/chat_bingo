@@ -47,6 +47,7 @@ impl ResponseError for CreateError {
 #[cfg_attr(feature="swagger-ui", utoipa::path(
     post,
     path = "/game/create",
+    tag = "Game",
     security(
         ("user_token" = ["write:games"])
     ),

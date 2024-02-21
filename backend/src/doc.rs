@@ -21,7 +21,11 @@ use crate::{game::{create, get, update}, websocket, auth};
             websocket::WsRequestError
         ),
         responses(create::CreatedGame, get::GameData)
-    )
+    ),
+    tags(
+        (name = "Game", description = "endpoints that control the game cycle"),
+        (name = "Auth", description = "endpoints relating to user authentication")
+    ),
 )]
 pub struct ApiDoc;
 

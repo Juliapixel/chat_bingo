@@ -24,6 +24,7 @@ pub struct GameData<'a> {
 #[cfg_attr(feature="swagger-ui", utoipa::path(
     get,
     path="/game/get",
+    tag = "Game",
     params(GameRequest),
     responses(
         (status = 400, description = "no game with that ULID was found"),
