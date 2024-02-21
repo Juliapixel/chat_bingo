@@ -1,0 +1,27 @@
+﻿@page "/api"
+@inject HttpClient Http
+
+<PageTitle>API</PageTitle>
+
+<h1>API Test</h1>
+
+Click button to test API 😮
+
+<p role="status">Current count: @x</p>
+
+<button class="btn btn-primary" @onclick="APIReq">Click me</button>
+
+@code {
+    private int currentCount = 0;
+    private string x = "";
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    protected async Task APIReq()
+    {
+        //NYI
+    }
+}
