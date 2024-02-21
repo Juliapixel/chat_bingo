@@ -1,11 +1,11 @@
 {
   "version": "1.0",
   "defaultProvider": "cdnjs",
-    "libraries": [
-        {
-            "provider": "cdnjs",
-            "library": "bootstrap@5.3.2",
-            "destination": "wwwroot"
-        }
-    ]
+  "libraries": [
+    {
+      "provider": "unpkg",
+      "library": "bootstrap@5.3.3",
+      "destination": "wwwroot/lib/bootstrap/"
+    }
+  ]
 }
