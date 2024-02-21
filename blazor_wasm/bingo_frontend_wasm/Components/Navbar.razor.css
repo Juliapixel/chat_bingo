@@ -1,0 +1,13 @@
+.bg-light {
+    --bs-bg-opacity: 0.85;
+}
+
+.navbar .navbar-nav > li > a:hover, .navbar .navbar-nav > li > a:focus {
+    color: #989898;
+    text-decoration: underline;
+}
+
+.nav-fill ::deep a.active {
+    color: #ffffff;
+    background-color: #9046ff;
+}
