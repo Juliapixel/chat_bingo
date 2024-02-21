@@ -29,8 +29,11 @@ const JULIALUXEL_TWITCH_ID: &'static str = "173685614";
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[cfg_attr(feature = "swagger-ui", derive(utoipa::ToSchema, utoipa::IntoParams))]
 pub struct TwitchAuthParamsSuccess {
+    /// the code used to request an access token from the twitch API
     code: String,
+    /// the scopes of the token
     scope: String,
+    /// optional state param to avoid CSRF
     state: Option<String>
 }
 
@@ -38,8 +41,11 @@ pub struct TwitchAuthParamsSuccess {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[cfg_attr(feature = "swagger-ui", derive(utoipa::ToSchema, utoipa::IntoParams))]
 pub struct TwitchAuthParamsError {
+    /// error returned by twitch
     error: String,
+    /// description of the error
     error_description: String,
+    /// optional state param to avoid CSRF
     state: Option<String>
 }
 

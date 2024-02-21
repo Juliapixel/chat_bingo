@@ -62,6 +62,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for BingoWs {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[cfg_attr(feature = "swagger-ui", derive(utoipa::IntoParams))]
 pub struct WsParams {
+    /// the ULID of the game the client wishes to monitor
     game: Ulid
 }
 

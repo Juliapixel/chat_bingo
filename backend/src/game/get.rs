@@ -7,6 +7,7 @@ use super::{manager::GamesManager, Item};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[cfg_attr(feature="swagger-ui", derive(utoipa::IntoParams, utoipa::ToSchema))]
 pub struct GameRequest {
+    /// the ULID of the game
     #[cfg_attr(feature="swagger-ui", schema(example = "01HPQVN1ENW15AWCYY8VGBKGF1"))]
     pub(super) id: Ulid
 }
