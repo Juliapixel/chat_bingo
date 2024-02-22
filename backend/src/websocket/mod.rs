@@ -84,6 +84,7 @@ impl ResponseError for WsRequestError {
     }
 }
 
+/// websocket connection to give live game updates to players
 #[cfg_attr(feature = "swagger-ui", utoipa::path(
     get,
     path = "/ws",

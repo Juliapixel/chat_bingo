@@ -21,6 +21,7 @@ pub struct GameData<'a> {
     size: u32
 }
 
+/// get the current information of an ongoing game
 #[cfg_attr(feature="swagger-ui", utoipa::path(
     get,
     path="/game/get",

@@ -44,6 +44,7 @@ impl ResponseError for CreateError {
     }
 }
 
+/// create a new game
 #[cfg_attr(feature="swagger-ui", utoipa::path(
     post,
     path = "/game/create",
