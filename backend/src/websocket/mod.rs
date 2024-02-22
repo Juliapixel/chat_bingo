@@ -95,9 +95,13 @@ impl ResponseError for WsRequestError {
         (status = 400, description = "Game wasn't found", body = WsRequestError)
     )
 ))]
-pub async fn websocket(req: HttpRequest, stream: web::Payload, params: Query<WsParams>) -> impl Responder {
-    let distributer = req.app_data::<Data<GamesManager>>().unwrap();
-    if let Some(rx) = distributer.get_game(params.game).map(|g| g.subscribe_to()) {
+pub async fn websocket(
+    req: HttpRequest,
+    stream: web::Payload,
+    params: Query<WsParams>,
+    games_manager: Data<GamesManager>
+) -> impl Responder {
+    if let Some(rx) = games_manager.get_game(params.game).map(|g| g.subscribe_to()) {
         let ws = BingoWs{
             last_message: Instant::now(),
             game: params.game,
