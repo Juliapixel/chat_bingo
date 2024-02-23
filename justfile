@@ -22,8 +22,8 @@ build_backend_image:
 
 alias bw := build_web
 build_web:
-    cd ./blazor && dotnet build
+    cd ./blazor_wasm/bingo_frontend_wasm && dotnet build
 
 alias rw := run_web
 run_web:
-    cd ./blazor/chat_bingo_frontend && dotnet run
+    cd ./blazor_wasm/bingo_frontend_wasm && dotnet run
