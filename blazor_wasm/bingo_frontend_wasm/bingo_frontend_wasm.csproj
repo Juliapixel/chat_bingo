@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\CreditFooter.razor.css" />
     <None Remove="Components\Modal.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Components\CreditFooter.razor.css" />
     <Content Include="Components\Modal.razor.css" />
   </ItemGroup>
 
@@ -18,6 +20,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\Game\" />
+    <Folder Include="wwwroot\assets\img\" />
   </ItemGroup>
 
 </Project>
