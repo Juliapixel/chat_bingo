@@ -111,5 +111,7 @@ async fn main() {
         );
 
         return app
-    }).bind((BIND_ADDRESS, args.port)).unwrap().run().await.unwrap();
+    }).bind((BIND_ADDRESS, args.port))
+    .unwrap_or_else(|e| panic!("{}: {e}", format!("unable to bind server to {}:{}", BIND_ADDRESS, args.port)))
+    .run().await.unwrap();
 }
