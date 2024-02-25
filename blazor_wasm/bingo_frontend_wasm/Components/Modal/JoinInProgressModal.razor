@@ -1,0 +1,25 @@
+﻿@* These modals currently aren't designed using templating/render fragments; they will be adapted into generic templates in the future *@
+
+<div class="modal fade" id="joinGameModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Warning</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>You appear to be part of a game that is still in progress, would you like to <strong>rejoin it</strong> or <strong>abandon it</strong>?</p>
+                <p>If you choose to abandon your current game, you will not be able to rejoin that streamers game until a new round has started.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Abandon</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Rejoin</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+}
