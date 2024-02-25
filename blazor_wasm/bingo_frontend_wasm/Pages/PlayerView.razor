@@ -1,7 +1,10 @@
 ﻿@page "/play"
+@using bingo_frontend_wasm.Components;
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Play</PageTitle>
 
 <h1 class="display-1">Player Board View</h1>
+<div class="text-center py-5"><button type="button" class="btn btn-primary" data-bs-target="#joinGameModal" data-bs-toggle="modal">Join Game</button></div>
+<hr />
 
-This page is a placeholder
+<GameBoard/>
