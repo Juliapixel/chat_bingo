@@ -1,9 +1,17 @@
 use std::{net::Ipv4Addr, path::PathBuf, time::Duration};
 
 use actix_files::{Files, NamedFile};
-use actix_web::{dev::{fn_service, ServiceRequest, ServiceResponse}, middleware::{Compress, DefaultHeaders, Logger}, web::{self, Data}};
+use actix_web::{
+    dev::{fn_service, ServiceRequest, ServiceResponse},
+    middleware::{Compress, DefaultHeaders, Logger},
+    web::{self, Data}
+};
 use bingo_backend::{
-    auth::{self, TwitchAuthMiddleware}, cli, game::{self, manager::GamesManager}, rate_limiter::{Dummy, InMemory, RateLimiter}, websocket
+    auth::{self, TwitchAuthMiddleware},
+    game::{self, manager::GamesManager},
+    rate_limiter::{Dummy, InMemory, RateLimiter},
+    websocket,
+    cli
 };
 use env_logger::Env;
 use log::{error, info};
