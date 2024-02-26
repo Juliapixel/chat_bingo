@@ -1,7 +1,7 @@
 use std::sync::OnceLock;
 
 use bingo_backend::app_info::AppInfo;
-use clap::{Args, Parser};
+use clap::{ArgAction, Args, Parser};
 
 /// returns a lazily initiated global instance of [Arguments]
 pub fn args() -> &'static Arguments {
@@ -21,6 +21,13 @@ pub struct Arguments {
     /// whether X-Forwaded-For headers are trusted or not
     #[arg(long, env="REVERSE_PROXY_MODE")]
     pub reverse_proxy_mode: bool,
+    /// set verbosity of logging
+    ///
+    /// - 0 -> INFO
+    /// - 1 -> DEBUG
+    /// - 2 -> TRACE
+    #[arg(short, action(ArgAction::Count), env="BINGO_VERBOSITY")]
+    pub verbose: u8,
     #[command(flatten)]
     pub pg_args: PgArgs,
     #[command(flatten)]

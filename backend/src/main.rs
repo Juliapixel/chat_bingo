@@ -42,7 +42,11 @@ async fn main() {
 
     env_logger::init_from_env(
         Env::new()
-            .filter_or("BINGO_LOG", DEFAULT_LEVEL)
+            .filter_or("BINGO_LOG", match args.verbose {
+                0 => "INFO",
+                1 => "DEBUG",
+                _ => "TRACE"
+            })
     );
 
     let manager = Data::new(GamesManager::new());
