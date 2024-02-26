@@ -1,9 +1,11 @@
-use std::{net::Ipv4Addr, time::Duration};
+use std::{net::Ipv4Addr, path::PathBuf, time::Duration};
 
-use actix_web::{middleware::{Compress, DefaultHeaders, Logger}, web::{self, Data}};
+use actix_files::{Files, NamedFile};
+use actix_web::{dev::{fn_service, ServiceRequest, ServiceResponse}, middleware::{Compress, DefaultHeaders, Logger}, web::{self, Data}};
 use bingo_backend::{auth::{self, TwitchAuthMiddleware}, game::{self, manager::GamesManager}, websocket};
 use env_logger::Env;
 use log::{error, info};
+use once_cell::sync::Lazy;
 use sqlx::ConnectOptions;
 
 #[cfg(feature="swagger-ui")]
@@ -13,17 +15,6 @@ use {
 };
 
 mod cli;
-
-const DEFAULT_LEVEL: &'static str = {
-    #[cfg(debug_assertions)]
-    {
-        "DEBUG"
-    }
-    #[cfg(not(debug_assertions))]
-    {
-        "INFO"
-    }
-};
 
 const BIND_ADDRESS: Ipv4Addr = {
     #[cfg(debug_assertions)]
@@ -38,11 +29,9 @@ const BIND_ADDRESS: Ipv4Addr = {
 
 #[tokio::main]
 async fn main() {
-    let args = cli::args();
-
     env_logger::init_from_env(
         Env::new()
-            .filter_or("BINGO_LOG", match args.verbose {
+            .filter_or("BINGO_LOG", match cli::ARGS.verbose {
                 0 => "INFO",
                 1 => "DEBUG",
                 _ => "TRACE"
@@ -58,11 +47,11 @@ async fn main() {
         .min_connections(1)
         .connect_with(
             sqlx::postgres::PgConnectOptions::default()
-                .database(&args.pg_args.database)
-                .port(args.pg_args.pg_port)
-                .host(&args.pg_args.pg_host)
-                .username(&args.pg_args.username)
-                .password(&args.pg_args.password)
+                .database(&cli::ARGS.pg_args.database)
+                .port(cli::ARGS.pg_args.pg_port)
+                .host(&cli::ARGS.pg_args.pg_host)
+                .username(&cli::ARGS.pg_args.username)
+                .password(&cli::ARGS.pg_args.password)
                 .log_slow_statements(log::LevelFilter::Warn, Duration::from_millis(300))
     ).await {
         Ok(pool) => Data::new(pool),
@@ -89,9 +78,9 @@ async fn main() {
         docs
     };
 
-    let app_info = Data::new(args.app_info.clone());
+    let app_info = Data::new(cli::ARGS.app_info.clone());
 
-    let logger_format = match args.reverse_proxy_mode {
+    let logger_format = match cli::ARGS.reverse_proxy_mode {
         true => "%ra | %r | %s",
         false => "%a | %r | %s",
     };
@@ -103,19 +92,34 @@ async fn main() {
             .app_data(db_pool.clone())
             .wrap(Compress::default())
             .wrap(TwitchAuthMiddleware::default())
-            .wrap(Logger::new(logger_format))
             .wrap(DefaultHeaders::new().add(("Server", "actix-web")))
+            .wrap(Logger::new(logger_format))
             .service(web::resource("/ws").get(websocket::websocket))
             .service(web::resource("/twitch_auth").get(auth::twitch_auth))
-            .service(web::scope("/game").configure(game::configure));
+            .service(web::scope("/game").configure(game::configure))
+            .service(
+                Files::new("/", cli::ARGS.static_files_path.clone())
+                    .index_file("index.html")
+                    .disable_content_disposition()
+                    .default_handler(fn_service(|req: ServiceRequest| async {
+                        static DEFAULT_PATH: Lazy<PathBuf> = Lazy::new(|| {
+                            let mut path = cli::ARGS.static_files_path.clone();
+                            path.push("index.html");
+                            path
+                        });
+                        let file = NamedFile::open_async(&*DEFAULT_PATH).await?;
+                        let res = file.into_response(req.parts().0);
+                        Ok(ServiceResponse::new(req.into_parts().0, res))
+                    }))
+            );
 
         #[cfg(feature="swagger-ui")]
         let app = app.service(
             SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-doc/openapi.json", api_doc.clone())
         );
 
-        return app
-    }).bind((BIND_ADDRESS, args.port))
-    .unwrap_or_else(|e| panic!("{}: {e}", format!("unable to bind server to {}:{}", BIND_ADDRESS, args.port)))
+        app
+    }).bind((BIND_ADDRESS, cli::ARGS.port))
+    .unwrap_or_else(|e| panic!("unable to bind server to {BIND_ADDRESS}:{}: {e}", cli::ARGS.port))
     .run().await.unwrap();
 }
