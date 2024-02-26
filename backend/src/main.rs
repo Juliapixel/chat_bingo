@@ -29,6 +29,8 @@ const BIND_ADDRESS: Ipv4Addr = {
 
 #[tokio::main]
 async fn main() {
+    // Initializing logging
+
     env_logger::init_from_env(
         Env::new()
             .filter_or("BINGO_LOG", match cli::ARGS.verbose {
@@ -38,7 +40,7 @@ async fn main() {
             })
     );
 
-    let manager = Data::new(GamesManager::new());
+    // Connecting to database
 
     info!("connecting to database...");
 
@@ -61,6 +63,8 @@ async fn main() {
         }
     };
 
+    // Applying database migrations
+
     info!("applying db migrations...");
 
     let res = sqlx::migrate!("./migrations")
@@ -71,12 +75,16 @@ async fn main() {
         return
     }
 
+    // Initializing server shared data
+
     #[cfg(feature="swagger-ui")]
     let api_doc = {
         let docs = bingo_backend::doc::ApiDoc::openapi();
         info!("Swagger UI API docs availablet at /swagger-ui/#");
         docs
     };
+
+    let manager = Data::new(GamesManager::new());
 
     let app_info = Data::new(cli::ARGS.app_info.clone());
 
