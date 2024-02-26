@@ -85,7 +85,18 @@ async fn main() {
         false => "%a | %r | %s",
     };
 
-    let rate_limiter = RateLimiter::new(Dummy::new());
+    let rate_limiter = RateLimiter::new({
+        #[cfg(debug_assertions)]
+        {
+            info!("initializing rate limiting with dummy limiter");
+            Dummy::new()
+        }
+        #[cfg(not(debug_assertions))]
+        {
+            info!("initializing rate limiting with in-memory rate limiter");
+            InMemory::new(Duration::from_secs(10), 100)
+        }
+    });
 
     actix_web::HttpServer::new(move || {
         let app = actix_web::App::new()
