@@ -82,9 +82,7 @@ where
         } else {
             IpAddr::from_str(req.connection_info().peer_addr().unwrap()).unwrap()
         };
-        let start = Instant::now();
         let is_limited = self.backend.limit(ip);
-        trace!("rate limiting took {}us", start.elapsed().as_micros());
         let fut = self.service.call(req);
         Box::pin(async move {
             if is_limited {
