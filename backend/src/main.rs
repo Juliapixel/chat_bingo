@@ -1,8 +1,6 @@
-use std::{net::Ipv4Addr, path::PathBuf, time::Duration};
+use std::{net::Ipv4Addr, time::Duration};
 
-use actix_files::{Files, NamedFile};
 use actix_web::{
-    dev::{fn_service, ServiceRequest, ServiceResponse},
     middleware::{Compress, DefaultHeaders, Logger},
     web::{self, Data}
 };
@@ -15,7 +13,6 @@ use bingo_backend::{
 };
 use env_logger::Env;
 use log::{error, info};
-use once_cell::sync::Lazy;
 use sqlx::ConnectOptions;
 
 #[cfg(feature="swagger-ui")]
@@ -126,22 +123,7 @@ async fn main() {
             .wrap(Logger::new(logger_format))
             .service(web::resource("/ws").get(websocket::websocket))
             .service(web::resource("/twitch_auth").get(auth::twitch_auth))
-            .service(web::scope("/game").configure(game::configure))
-            .service(
-                Files::new("/", cli::ARGS.static_files_path.clone())
-                    .index_file("index.html")
-                    .disable_content_disposition()
-                    .default_handler(fn_service(|req: ServiceRequest| async {
-                        static DEFAULT_PATH: Lazy<PathBuf> = Lazy::new(|| {
-                            let mut path = cli::ARGS.static_files_path.clone();
-                            path.push("index.html");
-                            path
-                        });
-                        let file = NamedFile::open_async(&*DEFAULT_PATH).await?;
-                        let res = file.into_response(req.parts().0);
-                        Ok(ServiceResponse::new(req.into_parts().0, res))
-                    }))
-            );
+            .service(web::scope("/game").configure(game::configure));
 
         #[cfg(feature="swagger-ui")]
         let app = app.service(
