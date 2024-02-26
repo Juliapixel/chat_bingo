@@ -1,6 +1,14 @@
+# private environment variables
 .env
+
+# private justfile recipes
+local.just
+
+# IDE files
 .vscode/
 .vs/
+
+# C# build stuff
 artifacts/
 bin/
 obj/
@@ -8,6 +16,8 @@ obj/
 .nuget/
 .packages/
 .tools/
+
+# Visual Studio stuff
 *.suo
 *.user
 *.userosscache
