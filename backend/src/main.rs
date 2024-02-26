@@ -2,7 +2,9 @@ use std::{net::Ipv4Addr, path::PathBuf, time::Duration};
 
 use actix_files::{Files, NamedFile};
 use actix_web::{dev::{fn_service, ServiceRequest, ServiceResponse}, middleware::{Compress, DefaultHeaders, Logger}, web::{self, Data}};
-use bingo_backend::{auth::{self, TwitchAuthMiddleware}, game::{self, manager::GamesManager}, websocket};
+use bingo_backend::{
+    auth::{self, TwitchAuthMiddleware}, cli, game::{self, manager::GamesManager}, rate_limiter::{Dummy, InMemory, RateLimiter}, websocket
+};
 use env_logger::Env;
 use log::{error, info};
 use once_cell::sync::Lazy;
@@ -13,8 +15,6 @@ use {
     utoipa::OpenApi,
     utoipa_swagger_ui::SwaggerUi
 };
-
-mod cli;
 
 const BIND_ADDRESS: Ipv4Addr = {
     #[cfg(debug_assertions)]
@@ -85,6 +85,8 @@ async fn main() {
         false => "%a | %r | %s",
     };
 
+    let rate_limiter = RateLimiter::new(Dummy::new());
+
     actix_web::HttpServer::new(move || {
         let app = actix_web::App::new()
             .app_data(app_info.clone())
@@ -93,6 +95,7 @@ async fn main() {
             .wrap(Compress::default())
             .wrap(TwitchAuthMiddleware::default())
             .wrap(DefaultHeaders::new().add(("Server", "actix-web")))
+            .wrap(rate_limiter.clone())
             .wrap(Logger::new(logger_format))
             .service(web::resource("/ws").get(websocket::websocket))
             .service(web::resource("/twitch_auth").get(auth::twitch_auth))

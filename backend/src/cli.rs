@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use bingo_backend::app_info::AppInfo;
+use crate::app_info::AppInfo;
 use clap::{ArgAction, Args, Parser};
 use once_cell::sync::Lazy;
 
