@@ -94,8 +94,8 @@ async fn main() {
     let app_info = Data::new(cli::ARGS.app_info.clone());
 
     let logger_format = match cli::ARGS.reverse_proxy_mode {
-        true => "%ra | %r | %s",
-        false => "%a | %r | %s",
+        true => "%ra | %r | status: %s | took %Dms",
+        false => "%a | %r | status: %s | took %Dms",
     };
 
     let rate_limiter = RateLimiter::new({
