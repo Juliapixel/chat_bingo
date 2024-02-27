@@ -1,5 +1,6 @@
 use crate::app_info::AppInfo;
-use clap::{ArgAction, Args, Parser};
+use chrono::DateTime;
+use clap::{crate_version, ArgAction, Args, Parser};
 use once_cell::sync::Lazy;
 
 pub static ARGS: Lazy<Arguments> = Lazy::new(|| {
@@ -7,17 +8,44 @@ pub static ARGS: Lazy<Arguments> = Lazy::new(|| {
     Arguments::parse()
 });
 
-const HELP_FORMAT: &str = "Chat Bingo Backend v{version}
-{about-with-newline}(C) {author}
-{before-help}
-{usage-heading} {usage}
+static HELP_FORMAT: Lazy<String> = Lazy::new(|| {
+    format!("Chat Bingo Backend v{}
+{{about-with-newline}}(C) {{author}}
+{{before-help}}
+{{usage-heading}} {{usage}}
 
-{all-args}{after-help}
-";
+{{all-args}}{{after-help}}", crate_version!())
+});
+
+fn truncate(val: &str, len: usize) -> &str {
+    let mut end_idx = 0;
+    let mut chars = val.char_indices();
+    for _ in 0..len {
+        if let Some((idx, c)) = chars.next() {
+            end_idx = idx + c.len_utf8();
+        } else {
+            break;
+        }
+    }
+    return &val[0..end_idx];
+}
+
+static VERSION: Lazy<String> = Lazy::new(|| {
+    format!(
+        "{}\ncommit: {}\nbranch: {}\nbuilt at: {}",
+        crate_version!(),
+        truncate(env!("VERGEN_GIT_SHA"), 8),
+        env!("VERGEN_GIT_BRANCH"),
+        DateTime::parse_from_rfc3339(env!("VERGEN_BUILD_TIMESTAMP"))
+            .expect("failed to parse date from env variable")
+            .with_timezone(&chrono::Local)
+            .format("%F %T %z")
+    )
+});
 
 /// The backend service for Chat Bingo
 #[derive(Parser)]
-#[command(version, author, help_template = HELP_FORMAT)]
+#[command(version = &**VERSION, author, help_template = &**HELP_FORMAT)]
 pub struct Arguments {
     #[arg(short, long, default_value = "8080")]
     pub port: u16,

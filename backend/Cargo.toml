@@ -39,5 +39,8 @@ base64 = "0.21.7"
 once_cell = "1.19.0"
 dashmap = "5.5.3"
 
+[build-dependencies]
+vergen = {version = "8.3", features = ["git", "gitoxide", "build"]}
+
 [features]
 swagger-ui = ["dep:utoipa", "dep:utoipa-swagger-ui"]
