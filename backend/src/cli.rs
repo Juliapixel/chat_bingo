@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use crate::app_info::AppInfo;
 use clap::{ArgAction, Args, Parser};
 use once_cell::sync::Lazy;
@@ -9,7 +7,17 @@ pub static ARGS: Lazy<Arguments> = Lazy::new(|| {
     Arguments::parse()
 });
 
+const HELP_FORMAT: &str = "Chat Bingo Backend v{version}
+{about-with-newline}(C) {author}
+{before-help}
+{usage-heading} {usage}
+
+{all-args}{after-help}
+";
+
+/// The backend service for Chat Bingo
 #[derive(Parser)]
+#[command(version, author, help_template = HELP_FORMAT)]
 pub struct Arguments {
     #[arg(short, long, default_value = "8080")]
     pub port: u16,
