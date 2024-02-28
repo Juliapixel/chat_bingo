@@ -1,8 +1,9 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     background-image: linear-gradient(315deg, #581982 10%, #180436 100%);
+    background-repeat: no-repeat;
     background-attachment: fixed;
-    height: 100vh;
+    background-size: 100% 100%;
 }
 
 h1:focus {
