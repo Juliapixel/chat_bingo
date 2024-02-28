@@ -1,0 +1,14 @@
+
+.btn-primary {
+    background-color: #16a6ff;
+}
+
+.game-board-container {
+    width: 40vw;
+}
+
+.tile {
+    min-width: 100px;
+    min-height: 100px;    
+}
+
