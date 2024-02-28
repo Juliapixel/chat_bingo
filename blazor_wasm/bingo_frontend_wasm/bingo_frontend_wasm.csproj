@@ -7,15 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Components\CreditFooter.razor.css" />
-    <None Remove="Components\GameBoard.razor.css" />
+    <None Remove="Components\Common\CreditFooter.razor.css" />
+    <None Remove="Components\Game\GameBoard.razor.css" />
+    <None Remove="Components\Game\HostControls.razor.css" />
     <None Remove="Components\Modal\JoinInProgressModal.razor.css" />
     <None Remove="Components\Modal\PlaceholderModal.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Components\CreditFooter.razor.css" />
-    <Content Include="Components\GameBoard.razor.css" />
+    <Content Include="Components\Common\CreditFooter.razor.css" />
+    <Content Include="Components\Game\GameBoard.razor.css" />
+    <Content Include="Components\Game\HostControls.razor.css" />
     <Content Include="Components\Modal\JoinInProgressModal.razor.css" />
     <Content Include="Components\Modal\PlaceholderModal.razor.css" />
   </ItemGroup>
@@ -27,7 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Game\" />
     <Folder Include="wwwroot\assets\img\" />
   </ItemGroup>
 
