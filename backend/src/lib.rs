@@ -13,5 +13,6 @@ pub mod app_info;
 pub mod user;
 pub mod cli;
 pub mod rate_limiter;
+pub mod metrics;
 #[cfg(feature = "swagger-ui")]
 pub mod doc;

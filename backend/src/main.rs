@@ -5,11 +5,7 @@ use actix_web::{
     web::{self, Data}
 };
 use bingo_backend::{
-    auth::{self, TwitchAuthMiddleware},
-    game::{self, manager::GamesManager},
-    rate_limiter::{Dummy, InMemory, RateLimiter},
-    websocket,
-    cli
+    auth::{self, TwitchAuthMiddleware}, cli, game::{self, manager::GamesManager}, metrics::{prometheus_endpoint, Prometheus}, rate_limiter::{Dummy, InMemory, RateLimiter}, websocket
 };
 use env_logger::Env;
 use log::{error, info};
@@ -116,11 +112,13 @@ async fn main() {
             .app_data(app_info.clone())
             .app_data(manager.clone())
             .app_data(db_pool.clone())
-            .wrap(Compress::default())
-            .wrap(TwitchAuthMiddleware::default())
-            .wrap(DefaultHeaders::new().add(("Server", "actix-web")))
+            .wrap(Prometheus::new())
             .wrap(rate_limiter.clone())
             .wrap(Logger::new(logger_format))
+            .wrap(TwitchAuthMiddleware::default())
+            .wrap(DefaultHeaders::new().add(("Server", "actix-web")))
+            .wrap(Compress::default())
+            .service(web::resource("/metrics").get(prometheus_endpoint))
             .service(web::resource("/ws").get(websocket::websocket))
             .service(web::resource("/twitch_auth").get(auth::twitch_auth))
             .service(web::scope("/game").configure(game::configure));
