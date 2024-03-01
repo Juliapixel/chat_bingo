@@ -41,7 +41,7 @@ dashmap = "5.5.3"
 prometheus = "0.13.3"
 
 [build-dependencies]
-vergen = {version = "8.3", features = ["git", "gitoxide", "build"]}
+vergen = {version = "8.3", features = ["git", "git2", "build"]}
 
 [features]
 swagger-ui = ["dep:utoipa", "dep:utoipa-swagger-ui"]

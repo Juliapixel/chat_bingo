@@ -5,6 +5,7 @@ fn main() {
 
     EmitBuilder::builder()
         .all_git()
+        .git_dirty(true)
         .build_timestamp()
         .emit_at("../.git".into())
         .unwrap();

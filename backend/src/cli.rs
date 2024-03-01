@@ -32,9 +32,10 @@ fn truncate(val: &str, len: usize) -> &str {
 
 static VERSION: Lazy<String> = Lazy::new(|| {
     format!(
-        "v{}\ncommit: {}\nbranch: {}\nbuilt at: {}",
+        "v{}\ncommit: {} {}\nbranch: {}\nbuilt at: {}",
         crate_version!(),
         truncate(env!("VERGEN_GIT_SHA"), 8),
+        if env!("VERGEN_GIT_DIRTY").parse::<bool>().unwrap_or_default() { "DIRTY" } else { "" },
         env!("VERGEN_GIT_BRANCH"),
         DateTime::parse_from_rfc3339(env!("VERGEN_BUILD_TIMESTAMP"))
             .map(|dt| dt.with_timezone(&chrono::Local).format("%F %T %z").to_string())
