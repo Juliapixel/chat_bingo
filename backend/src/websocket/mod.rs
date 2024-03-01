@@ -1,7 +1,7 @@
 use std::time::{Duration, Instant};
 
 use actix::{Actor, ActorContext, AsyncContext, StreamHandler};
-use actix_web::{http::header::TryIntoHeaderValue, web::{self, Data, Query}, Error, HttpRequest, HttpResponse, HttpResponseBuilder, Responder, ResponseError};
+use actix_web::{web::{self, Data, Query}, Error, HttpRequest, HttpResponse, HttpResponseBuilder, Responder, ResponseError};
 use actix_web_actors::ws;
 use log::{debug, error, info};
 use serde::{Deserialize, Serialize};
