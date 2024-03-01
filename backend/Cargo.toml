@@ -4,7 +4,7 @@ version = "0.0.1"
 edition = "2021"
 authors = [
     "Juliapixel <julia@juliapixel.com>",
-    "VinFG1"
+    "VinFG1 <vinfg1@gmail.com>"
 ]
 
 [dependencies]
