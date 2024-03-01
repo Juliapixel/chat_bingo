@@ -1,6 +1,6 @@
 use std::time::{Duration, Instant};
 
-use actix::{Actor, ActorContext, AsyncContext, StreamHandler};
+use actix::{Actor, ActorContext, AsyncContext, SpawnHandle, StreamHandler};
 use actix_web::{web::{self, Data, Query}, Error, HttpRequest, HttpResponse, HttpResponseBuilder, Responder, ResponseError};
 use actix_web_actors::ws;
 use log::{debug, error, info};
@@ -21,17 +21,38 @@ struct BingoWs {
     last_message: Instant,
     game: Ulid,
     listener: Option<Receiver<ServerEvent>>,
+    heartbeat_handle: Option<SpawnHandle>,
+    listener_handle: Option<SpawnHandle>
 }
 
 impl BingoWs {
+    pub(self) fn new(receiver: Receiver<ServerEvent>, game_ulid: Ulid) -> Self {
+        Self {
+            last_message: Instant::now(),
+            game: game_ulid,
+            listener: Some(receiver),
+            heartbeat_handle: None,
+            listener_handle: None
+        }
+    }
 }
 
 impl Actor for BingoWs {
     type Context = ws::WebsocketContext<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
-        ctx.spawn(Heartbeat::new(HEARTBEAT_TIME, Duration::from_secs(1)));
-        ctx.spawn(EventListener::new(self.listener.take().unwrap()));
+        self.heartbeat_handle = Some(ctx.spawn(Heartbeat::new(HEARTBEAT_TIME, Duration::from_secs(1))));
+        self.listener_handle = Some(ctx.spawn(EventListener::new(self.listener.take().unwrap())));
+    }
+
+    // these are both cancel-safe since no important data is stored in them
+    fn stopped(&mut self, ctx: &mut Self::Context) {
+        if let Some(h) = self.heartbeat_handle {
+            ctx.cancel_future(h);
+        }
+        if let Some(h) = self.listener_handle {
+            ctx.cancel_future(h);
+        }
     }
 }
 
@@ -102,11 +123,7 @@ pub async fn websocket(
     games_manager: Data<GamesManager>
 ) -> impl Responder {
     if let Some(rx) = games_manager.get_game(params.game).map(|g| g.subscribe_to()) {
-        let ws = BingoWs{
-            last_message: Instant::now(),
-            game: params.game,
-            listener: Some(rx),
-        };
+        let ws = BingoWs::new(rx, params.game);
         let resp = ws::start(ws, &req, stream);
         info!("{resp:?}");
         resp
