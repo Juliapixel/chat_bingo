@@ -37,9 +37,8 @@ static VERSION: Lazy<String> = Lazy::new(|| {
         truncate(env!("VERGEN_GIT_SHA"), 8),
         env!("VERGEN_GIT_BRANCH"),
         DateTime::parse_from_rfc3339(env!("VERGEN_BUILD_TIMESTAMP"))
-            .expect("failed to parse date from env variable")
-            .with_timezone(&chrono::Local)
-            .format("%F %T %z")
+            .map(|dt| dt.with_timezone(&chrono::Local).format("%F %T %z").to_string())
+            .unwrap_or("unknown date".to_string())
     )
 });
 
