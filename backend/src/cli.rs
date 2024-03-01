@@ -32,7 +32,7 @@ fn truncate(val: &str, len: usize) -> &str {
 
 static VERSION: Lazy<String> = Lazy::new(|| {
     format!(
-        "{}\ncommit: {}\nbranch: {}\nbuilt at: {}",
+        "v{}\ncommit: {}\nbranch: {}\nbuilt at: {}",
         crate_version!(),
         truncate(env!("VERGEN_GIT_SHA"), 8),
         env!("VERGEN_GIT_BRANCH"),
