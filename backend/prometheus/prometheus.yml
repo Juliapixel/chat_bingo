@@ -1,0 +1,4 @@
+scrape_configs:
+  - job_name: bingo_backend
+    static_configs:
+      - targets: ["127.0.0.1:8080"]
