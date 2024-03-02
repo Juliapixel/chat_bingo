@@ -109,7 +109,8 @@ pub async fn twitch_auth(
                 .finish();
 
             return Ok(
-                HttpResponseBuilder::new(StatusCode::OK)
+                HttpResponseBuilder::new(StatusCode::TEMPORARY_REDIRECT)
+                    .insert_header(("Location", "/"))
                     .cookie(cookie).finish()
             );
         },
