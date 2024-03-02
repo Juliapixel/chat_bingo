@@ -10,6 +10,8 @@ class Program
     internal static string GITHASH { get; set; } = "";
     internal static string COMMITDATE { get; set; } = "";
 
+    //TODO: Add dev environment flag string
+
     static async Task Main(string[] args)
     {
         GITHASH = Assembly.GetEntryAssembly()
