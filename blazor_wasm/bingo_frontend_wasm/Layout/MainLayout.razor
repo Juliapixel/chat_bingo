@@ -13,9 +13,14 @@
             <article class="content px-4">
                 @Body
             </article>
-            <div class="position-fixed fixed-bottom">milestone1 prototype</div>
+            <div class="position-fixed fixed-bottom">milestone1 prototype @ver</div>
         </main>
     </div>
 </div>
+
+@code {
+    internal string ver = Program.GITHASH;
+
+}
 
 
