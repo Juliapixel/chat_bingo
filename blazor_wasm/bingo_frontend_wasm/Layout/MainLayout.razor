@@ -13,13 +13,14 @@
             <article class="content px-4">
                 @Body
             </article>
-            <div class="position-fixed fixed-bottom" title="@date" >milestone1 prototype @ver</div>
+            <div class="position-fixed fixed-bottom" title="@date" >@ver @commit</div>
         </main>
     </div>
 </div>
 
 @code {
-    internal string ver = Program.GITHASH;
+    internal string ver = Program.VERSIONNAME;
+    internal string commit = Program.GITHASH;
     internal string date = Program.COMMITDATE;
 
 }

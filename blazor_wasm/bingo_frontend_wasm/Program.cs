@@ -6,6 +6,7 @@ using System.Reflection;
 
 class Program
 {
+    internal static string VERSIONNAME { get; set; } = "ms1-proto";
     internal static string GITHASH { get; set; } = "";
     internal static string COMMITDATE { get; set; } = "";
 
