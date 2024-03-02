@@ -1,39 +1,49 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Components\Common\CreditFooter.razor.css" />
-    <None Remove="Components\Game\GameBoard.razor.css" />
-    <None Remove="Components\Game\HostControls.razor.css" />
-    <None Remove="Components\Modal\JoinInProgressModal.razor.css" />
-    <None Remove="Components\Modal\PlaceholderModal.razor.css" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Components\Common\CreditFooter.razor.css" />
+		<None Remove="Components\Game\GameBoard.razor.css" />
+		<None Remove="Components\Game\HostControls.razor.css" />
+		<None Remove="Components\Modal\JoinInProgressModal.razor.css" />
+		<None Remove="Components\Modal\PlaceholderModal.razor.css" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Components\Common\CreditFooter.razor.css" />
-    <Content Include="Components\Game\GameBoard.razor.css" />
-    <Content Include="Components\Game\HostControls.razor.css" />
-    <Content Include="Components\Modal\JoinInProgressModal.razor.css" />
-    <Content Include="Components\Modal\PlaceholderModal.razor.css" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Components\Common\CreditFooter.razor.css" />
+		<Content Include="Components\Game\GameBoard.razor.css" />
+		<Content Include="Components\Game\HostControls.razor.css" />
+		<Content Include="Components\Modal\JoinInProgressModal.razor.css" />
+		<Content Include="Components\Modal\PlaceholderModal.razor.css" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
-    <PackageReference Include="MSBuildGitHash" Version="2.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
+		<PackageReference Include="MSBuildGitHash" Version="2.0.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\assets\img\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="wwwroot\assets\img\" />
+	</ItemGroup>
+	<Target	Name="AssembleVerString" BeforeTargets="GenerateAssemblyAttributes">
+		<Exec Command="git log -1 --pretty=format:%%c%D" ConsoleToMSBuild="true" IgnoreExitCode="true">
+			<Output PropertyName="comdate" TaskParameter="ConsoleOutput"/>
+		</Exec>
+		<ItemGroup>
+			<AssemblyMetadata Include="CommitDate">
+				<Value>$(comdate)</Value>
+			</AssemblyMetadata>
+		</ItemGroup>
+	</Target>
 
 </Project>

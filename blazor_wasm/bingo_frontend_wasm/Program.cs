@@ -7,12 +7,17 @@ using System.Reflection;
 class Program
 {
     internal static string GITHASH { get; set; } = "";
+    internal static string COMMITDATE { get; set; } = "";
 
     static async Task Main(string[] args)
     {
         GITHASH = Assembly.GetEntryAssembly()
                           .GetCustomAttributes<AssemblyMetadataAttribute>()
                           .FirstOrDefault(attr => attr.Key == "GitHash")?.Value;
+
+        COMMITDATE = Assembly.GetEntryAssembly()
+                          .GetCustomAttributes<AssemblyMetadataAttribute>()
+                          .FirstOrDefault(attr => attr.Key == "CommitDate")?.Value;
 
         Console.WriteLine(GITHASH);
 
