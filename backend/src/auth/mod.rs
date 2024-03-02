@@ -105,7 +105,7 @@ pub async fn twitch_auth(
                 .http_only(true)
                 .secure(true)
                 .same_site(actix_web::cookie::SameSite::Strict)
-                .expires(time::OffsetDateTime::now_utc() + expiration)
+                .expires(time::OffsetDateTime::now_utc() + time::Duration::days(14))
                 .finish();
 
             return Ok(
