@@ -119,7 +119,7 @@ async fn main() {
             .wrap(
                 DefaultHeaders::new()
                     .add(("Access-Control-Allow-Origin", "*"))
-                    .add(("Access-Control-Allow-Headers", "*"))
+                    .add(("Access-Control-Allow-Methods", "*"))
                     .add(("Access-Control-Allow-Headers", "*"))
             )
             .wrap(Compress::default())
