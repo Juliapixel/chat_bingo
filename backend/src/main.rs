@@ -122,9 +122,6 @@ async fn main() {
                     .allow_any_header()
                     .allow_any_method()
                     .allow_any_origin()
-                    .allowed_origin_fn(|hv, rh| {
-                        hv.as_bytes().starts_with(b"localhost")
-                    })
             )
             .wrap(Compress::default())
             .service(web::resource("/metrics").get(prometheus_endpoint))
