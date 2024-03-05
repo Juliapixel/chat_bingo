@@ -1,5 +1,6 @@
 use std::{net::Ipv4Addr, time::Duration};
 
+use actix_cors::Cors;
 use actix_web::{
     middleware::{Compress, DefaultHeaders, Logger},
     web::{self, Data}
@@ -117,10 +118,13 @@ async fn main() {
             .wrap(Logger::new(logger_format))
             .wrap(TwitchAuthMiddleware::default())
             .wrap(
-                DefaultHeaders::new()
-                    .add(("Access-Control-Allow-Origin", "*"))
-                    .add(("Access-Control-Allow-Methods", "*"))
-                    .add(("Access-Control-Allow-Headers", "*"))
+                Cors::default()
+                    .allow_any_header()
+                    .allow_any_method()
+                    .allow_any_origin()
+                    .allowed_origin_fn(|hv, rh| {
+                        hv.as_bytes().starts_with(b"localhost")
+                    })
             )
             .wrap(Compress::default())
             .service(web::resource("/metrics").get(prometheus_endpoint))
