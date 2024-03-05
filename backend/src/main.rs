@@ -116,7 +116,10 @@ async fn main() {
             .wrap(rate_limiter.clone())
             .wrap(Logger::new(logger_format))
             .wrap(TwitchAuthMiddleware::default())
-            .wrap(DefaultHeaders::new().add(("Server", "actix-web")))
+            .wrap(
+                DefaultHeaders::new()
+                    .add(("Access-Control-Allow-Origin", "*"))
+            )
             .wrap(Compress::default())
             .service(web::resource("/metrics").get(prometheus_endpoint))
             .service(web::resource("/ws").get(websocket::websocket))
