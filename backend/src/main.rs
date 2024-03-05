@@ -114,8 +114,6 @@ async fn main() {
             .app_data(manager.clone())
             .app_data(db_pool.clone())
             .wrap(Prometheus::new())
-            .wrap(rate_limiter.clone())
-            .wrap(Logger::new(logger_format))
             .wrap(TwitchAuthMiddleware::default())
             .wrap(
                 Cors::default()
@@ -124,6 +122,8 @@ async fn main() {
                     .allow_any_origin()
             )
             .wrap(Compress::default())
+            .wrap(Logger::new(logger_format))
+            .wrap(rate_limiter.clone())
             .service(web::resource("/metrics").get(prometheus_endpoint))
             .service(web::resource("/ws").get(websocket::websocket))
             .service(web::resource("/twitch_auth").get(auth::twitch_auth))
