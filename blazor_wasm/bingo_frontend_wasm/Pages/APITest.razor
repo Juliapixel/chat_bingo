@@ -2,15 +2,15 @@
 @inject HttpClient HttpClient
 
 <PageTitle>API</PageTitle>
-
-<h1>API Test</h1>
-
-Click button to test API 😮
-
+<div>
+<p class="display-1">API Test</p>
+<hr />
+Click button to test API 👉
 <button class="btn btn-primary" @onclick="APIReq">Click me</button>
-
+</div>
+<div class="pt-3" style="filter: drop-shadow(0px 0px 9px #ffffff);">
 <p role="status">API Response: @content</p>
-
+</div>
 
 
 @code {
@@ -33,20 +33,21 @@ Click button to test API 😮
 
             if (response.IsSuccessStatusCode)
             {
-                content = await response.Content.ReadAsStringAsync();
+                content =  $"The API successfully created a new game with ID: {await response.Content.ReadAsStringAsync()}";
             }
             else
             {
-                content = "Request returned an error";
+                content = $"The API returned an error: {response.StatusCode}";
             }
         }
         catch (HttpRequestException e)
         {
-            content = "HTTPClient threw an exception";
+            content = "HTTPClient threw an exception, there may be an issue with the backend";
         }
 
     }
 
+    //This test data is hardcoded for API testing
     public class TestReq
     {
         public string[] items { get; set; }
