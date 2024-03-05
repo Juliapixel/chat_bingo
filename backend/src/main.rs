@@ -119,6 +119,8 @@ async fn main() {
             .wrap(
                 DefaultHeaders::new()
                     .add(("Access-Control-Allow-Origin", "*"))
+                    .add(("Access-Control-Allow-Headers", "*"))
+                    .add(("Access-Control-Allow-Headers", "*"))
             )
             .wrap(Compress::default())
             .service(web::resource("/metrics").get(prometheus_endpoint))
