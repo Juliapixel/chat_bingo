@@ -1,5 +1,5 @@
-﻿@page "/api"
-@inject HttpClient Http
+﻿@page "/apitest"
+@inject HttpClient HttpClient
 
 <PageTitle>API</PageTitle>
 
@@ -7,13 +7,15 @@
 
 Click button to test API 😮
 
-<p role="status">Current count: @x</p>
-
 <button class="btn btn-primary" @onclick="APIReq">Click me</button>
+
+<p role="status">API Response: @content</p>
+
+
 
 @code {
     private int currentCount = 0;
-    private string x = "";
+    private string content = "";
 
     private void IncrementCount()
     {
@@ -22,6 +24,44 @@ Click button to test API 😮
 
     protected async Task APIReq()
     {
-        //NYI
+        var data = new TestReq();
+        HttpResponseMessage? response = null;
+
+        try
+        {
+            response = await HttpClient.PostAsJsonAsync<TestReq>("game/create", data);
+
+            if (response.IsSuccessStatusCode)
+            {
+                content = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                content = "Request returned an error";
+            }
+        }
+        catch (HttpRequestException e)
+        {
+            content = "HTTPClient threw an exception";
+        }
+
+    }
+
+    public class TestReq
+    {
+        string[] items;
+        int size;
+
+        public TestReq()
+        {
+            items = new string[25];
+            size = 25;
+
+            for (int i = 0; i < size; i++)
+            {
+                items[i] = $"item{i}";
+            }
+        }
+
     }
 }
