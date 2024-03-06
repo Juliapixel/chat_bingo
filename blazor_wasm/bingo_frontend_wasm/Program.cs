@@ -19,9 +19,10 @@ class Program
                           .GetCustomAttributes<AssemblyMetadataAttribute>()
                           .FirstOrDefault(attr => attr.Key == "GitHash")?.Value;
 
-        COMMITDATE = Assembly.GetEntryAssembly()?
+        COMMITDATE = "Built " +
+                          Assembly.GetEntryAssembly()?
                           .GetCustomAttributes<AssemblyMetadataAttribute>()
-                          .FirstOrDefault(attr => attr.Key == "CommitDate")?.Value;
+                          .FirstOrDefault(attr => attr.Key == "BuildTime")?.Value;
 
 
         var builder = WebAssemblyHostBuilder.CreateDefault(args);

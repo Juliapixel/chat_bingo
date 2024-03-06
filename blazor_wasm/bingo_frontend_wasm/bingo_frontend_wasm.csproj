@@ -35,15 +35,10 @@
 	<ItemGroup>
 		<Folder Include="wwwroot\assets\img\" />
 	</ItemGroup>
-	<Target	Name="AssembleVerString" BeforeTargets="GenerateAssemblyAttributes">
-		<Exec Command="git log -1 --pretty=format:%%c%D" ConsoleToMSBuild="true" IgnoreExitCode="true">
-			<Output PropertyName="comdate" TaskParameter="ConsoleOutput"/>
-		</Exec>
-		<ItemGroup>
-			<AssemblyMetadata Include="CommitDate">
-				<Value>$(comdate)</Value>
-			</AssemblyMetadata>
-		</ItemGroup>
-	</Target>
 
+	<ItemGroup>
+		<AssemblyMetadata Include="BuildTime">
+			<Value>$([System.DateTime]::UtcNow.ToString("MM/dd/yyyy h:mm tt"))</Value>
+		</AssemblyMetadata>
+	</ItemGroup>
 </Project>
