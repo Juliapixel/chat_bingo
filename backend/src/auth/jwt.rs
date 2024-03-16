@@ -1,36 +1,29 @@
-use std::{sync::OnceLock, time::Duration};
+use std::{future::ready, time::Duration};
 
+use actix_web::{FromRequest, ResponseError};
 use base64::Engine;
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey, Header, TokenData, Validation};
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 use ulid::Ulid;
 
-fn get_jwt_secret() -> &'static (EncodingKey, DecodingKey) {
-    static SECRET: OnceLock<(EncodingKey, DecodingKey)> = OnceLock::new();
+static JWT_SECRET: Lazy<(EncodingKey, DecodingKey)> = Lazy::new(|| {
+    #[cfg(debug_assertions)]
+    {
+        let secret = base64::prelude::BASE64_STANDARD.decode(dotenvy::var("JWT_SECRET").unwrap()).unwrap();
+        (
+            EncodingKey::from_secret(&secret),
+            DecodingKey::from_secret(&secret)
+        )
+    }
+    #[cfg(not(debug_assertions))]
+    {
+        todo!("HELPPPP")
+    }
+});
 
-    SECRET.get_or_init(|| {
-        #[cfg(debug_assertions)]
-        {
-            let secret = base64::prelude::BASE64_STANDARD.decode(dotenvy::var("JWT_SECRET").unwrap()).unwrap();
-            (
-                EncodingKey::from_secret(&secret),
-                DecodingKey::from_secret(&secret)
-            )
-        }
-        #[cfg(not(debug_assertions))]
-        {
-            todo!("HELPPPP")
-        }
-    })
-}
-
-fn get_jwt_validation() -> &'static Validation {
-    static VALIDATION: OnceLock<Validation> = OnceLock::new();
-
-    VALIDATION.get_or_init(||{
-        Validation::new(Algorithm::default())
-    })
-}
+static JWT_VALIDATION: Lazy<Validation> = Lazy::new(|| { Validation::new(Algorithm::default()) });
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Claims {
@@ -75,10 +68,44 @@ impl Claims {
 }
 
 pub fn create_new_jwt(claims: Claims) -> String {
-    jsonwebtoken::encode(&Header::default(), &claims, &get_jwt_secret().0)
+    jsonwebtoken::encode(&Header::default(), &claims, &JWT_SECRET.0)
         .expect("failed to encode JWT token")
 }
 
 pub fn validate_jwt(token: &str) -> Result<TokenData<Claims>, jsonwebtoken::errors::Error>{
-    jsonwebtoken::decode(token, &get_jwt_secret().1, get_jwt_validation())
+    jsonwebtoken::decode(token, &JWT_SECRET.1, &JWT_VALIDATION)
+}
+
+#[derive(Debug, Clone, Error)]
+pub enum ClaimsExtractorError {
+    #[error("there was no jwt cookie in the request")]
+    NoCookie,
+    #[error("the provided cookie was missing")]
+    InvalidToken(#[from] jsonwebtoken::errors::Error)
+}
+
+impl ResponseError for ClaimsExtractorError {
+    fn status_code(&self) -> reqwest::StatusCode {
+        reqwest::StatusCode::UNAUTHORIZED
+    }
+
+    fn error_response(&self) -> actix_web::HttpResponse<actix_web::body::BoxBody> {
+        actix_web::HttpResponseBuilder::new(self.status_code())
+            .body(self.to_string())
+    }
+}
+
+impl FromRequest for Claims {
+    type Error = ClaimsExtractorError;
+
+    type Future = std::future::Ready<Result<Claims, ClaimsExtractorError>>;
+
+    fn from_request(req: &actix_web::HttpRequest, _payload: &mut actix_web::dev::Payload) -> Self::Future {
+        match req.cookie("jwt") {
+            Some(s) => {
+                ready(validate_jwt(s.value()).map(|i| i.claims).map_err(|e| e.into()))
+            },
+            None => ready(Err(ClaimsExtractorError::NoCookie)),
+        }
+    }
 }
