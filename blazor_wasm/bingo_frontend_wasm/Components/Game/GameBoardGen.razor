@@ -1,0 +1,21 @@
+﻿<div class="container game-board-container">
+    @for (int i = 0; i < @BoardSize; i++)
+    {
+        int curr_i = i;
+        <div class="row row-cols-auto bingo-row">
+            @for (int c = 0; c < @BoardSize; c++)
+            {
+                int curr_c = c;
+
+                <BingoTile>
+                    TileName @curr_i, @curr_c
+                </BingoTile>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int BoardSize { get; set; }
+}

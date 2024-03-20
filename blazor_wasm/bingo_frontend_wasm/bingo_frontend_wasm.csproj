@@ -8,7 +8,9 @@
 
 	<ItemGroup>
 		<None Remove="Components\Common\CreditFooter.razor.css" />
+		<None Remove="Components\Game\BingoTile.razor.css" />
 		<None Remove="Components\Game\GameBoard.razor.css" />
+		<None Remove="Components\Game\GameBoardGen.razor.css" />
 		<None Remove="Components\Game\HostControls.razor.css" />
 		<None Remove="Components\Modal\JoinInProgressModal.razor.css" />
 		<None Remove="Components\Modal\PlaceholderModal.razor.css" />
@@ -16,6 +18,8 @@
 
 	<ItemGroup>
 		<Content Include="Components\Common\CreditFooter.razor.css" />
+		<Content Include="Components\Game\BingoTile.razor.css" />
+		<Content Include="Components\Game\GameBoardGen.razor.css" />
 		<Content Include="Components\Game\GameBoard.razor.css" />
 		<Content Include="Components\Game\HostControls.razor.css" />
 		<Content Include="Components\Modal\JoinInProgressModal.razor.css" />
