@@ -2,11 +2,10 @@ use std::{net::Ipv4Addr, time::Duration};
 
 use actix_cors::Cors;
 use actix_web::{
-    middleware::{Compress, DefaultHeaders, Logger},
-    web::{self, Data}
+    middleware::{Compress, Logger}, web::{self, Data}
 };
 use bingo_backend::{
-    auth::{self, TwitchAuthMiddleware}, cli, game::{self, manager::GamesManager}, metrics::{prometheus_endpoint, Prometheus}, rate_limiter::{Dummy, InMemory, RateLimiter}, websocket
+    auth::{self, TwitchAuthMiddleware}, cli, game::{self, manager::GamesManager}, metrics::{prometheus_endpoint, Prometheus}, rate_limiter::{Dummy, InMemory, RateLimiter}, utils::ReqIpAddr, websocket
 };
 use env_logger::Env;
 use log::{error, info};
@@ -104,7 +103,7 @@ async fn main() {
         #[cfg(not(debug_assertions))]
         {
             info!("initializing rate limiting with in-memory rate limiter");
-            InMemory::new(Duration::from_secs(10), 100)
+            InMemory::<ReqIpAddr>::new(Duration::from_secs(10), 100)
         }
     });
 

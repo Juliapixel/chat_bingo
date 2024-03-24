@@ -1,3 +1,5 @@
+use actix_web::HttpRequest;
+
 use super::RateLimiterBackend;
 
 /// dummy rate limiting backend, always lets requests through
@@ -5,7 +7,7 @@ use super::RateLimiterBackend;
 pub struct Dummy();
 
 impl RateLimiterBackend for Dummy {
-    fn limit(&self, _ip: std::net::IpAddr) -> bool {
+    async fn limit(&self, _req: &HttpRequest) -> bool {
         false
     }
 }

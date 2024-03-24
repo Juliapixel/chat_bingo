@@ -1,7 +1,6 @@
-use std::{future::Future, net::IpAddr, pin::Pin, str::FromStr, time::Instant};
+use std::{future::Future, pin::Pin, rc::Rc};
 
-use actix_web::{dev::{Service, ServiceRequest, ServiceResponse, Transform}, HttpResponseBuilder, ResponseError};
-use log::{debug, trace};
+use actix_web::{dev::{Service, ServiceRequest, ServiceResponse, Transform}, HttpRequest, HttpResponseBuilder, ResponseError};
 use thiserror::Error;
 
 mod in_memory;
@@ -11,7 +10,7 @@ mod dummy;
 pub use dummy::Dummy;
 
 pub trait RateLimiterBackend {
-    fn limit(&self, ip: IpAddr) -> bool;
+    async fn limit(&self, req: &HttpRequest) -> bool;
 }
 
 /// Rate limiter middleware
@@ -30,7 +29,7 @@ impl<S, B, BA> Transform<S, ServiceRequest> for RateLimiter<BA>
 where
     S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = actix_web::Error> + 'static,
     S::Future: 'static,
-    BA: RateLimiterBackend + Clone
+    BA: RateLimiterBackend + Clone + 'static
 {
     type Response = ServiceResponse<B>;
     type Error = actix_web::Error;
@@ -39,13 +38,16 @@ where
     type Future = std::future::Ready<Result<Self::Transform, Self::InitError>>;
 
     fn new_transform(&self, service: S) -> Self::Future {
-        std::future::ready(Ok(RateLimiterMiddleware{service, backend: self.0.clone()}))
+        std::future::ready(Ok(RateLimiterMiddleware{
+            service: Rc::new(service),
+            backend: Rc::new(self.0.clone())
+        }))
     }
 }
 
 pub struct RateLimiterMiddleware<S: Service<ServiceRequest>, B: RateLimiterBackend> {
-    service: S,
-    backend: B
+    service: Rc<S>,
+    backend: Rc<B>
 }
 
 #[derive(Debug, Clone, Copy, Error)]
@@ -66,7 +68,7 @@ impl<S, B, BA> Service<ServiceRequest> for RateLimiterMiddleware<S, BA>
 where
     S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = actix_web::Error> + 'static,
     S::Future: 'static,
-    BA: RateLimiterBackend
+    BA: RateLimiterBackend + 'static
 {
     type Response = ServiceResponse<B>;
     type Error = actix_web::Error;
@@ -77,19 +79,13 @@ where
     }
 
     fn call(&self, req: ServiceRequest) -> Self::Future {
-        let ip = if crate::cli::ARGS.reverse_proxy_mode {
-            IpAddr::from_str(req.connection_info().realip_remote_addr().unwrap()).unwrap()
-        } else {
-            IpAddr::from_str(req.connection_info().peer_addr().unwrap()).unwrap()
-        };
-        let is_limited = self.backend.limit(ip);
-        let fut = self.service.call(req);
+        let serv = self.service.clone();
+        let limiter = self.backend.clone();
         Box::pin(async move {
-            if is_limited {
-                debug!("request from {ip} rate limited");
+            if limiter.limit(req.request()).await {
                 Err(RateLimiterError().into())
             } else {
-                fut.await
+                serv.call(req).await
             }
         })
     }

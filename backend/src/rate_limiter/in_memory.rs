@@ -1,5 +1,6 @@
-use std::{net::IpAddr, sync::Arc, time::{Duration, Instant}};
+use std::{hash::Hash, sync::Arc, time::{Duration, Instant}};
 
+use actix_web::{FromRequest, HttpRequest};
 use dashmap::DashMap;
 use parking_lot::RwLock;
 
@@ -9,26 +10,32 @@ use super::RateLimiterBackend;
 /// # implementation
 /// should be initialized outside of HttpServer::new and cloned inside of it
 #[derive(Debug, Clone)]
-pub struct InMemory {
-    storage: Arc<DashMap<IpAddr, u32>>,
+pub struct InMemory<T: FromRequest + Hash + Eq> {
+    storage: Arc<DashMap<T, u32>>,
     request_limit: u32,
     window_size: Duration,
     window_start: Arc<RwLock<Instant>>
 }
 
-impl RateLimiterBackend for InMemory {
-    fn limit(&self, ip: IpAddr) -> bool {
-        self.clear_if_window_passed();
-        self.track_address(ip);
-        if let Some(count) = self.storage.get(&ip) {
-            *count > self.request_limit
-        } else {
-            false
+impl<T: FromRequest + Hash + Eq> RateLimiterBackend for InMemory<T> {
+    async fn limit(&self, req: &HttpRequest) -> bool {
+        match T::extract(req).await {
+            Ok(tracked) => {
+                self.clear_if_window_passed();
+                if let Some(count) = self.storage.get(&tracked).map(|i| *i) {
+                    self.track(tracked);
+                    count > self.request_limit
+                } else {
+                    self.track(tracked);
+                    false
+                }
+            },
+            Err(_) => true,
         }
     }
 }
 
-impl InMemory {
+impl<T: FromRequest + Hash + Eq> InMemory<T> {
     pub fn new(window_size: Duration, max_requests: u32) -> Self {
         Self {
             storage: Arc::new(DashMap::new()),
@@ -45,12 +52,12 @@ impl InMemory {
         }
     }
 
-    fn track_address(&self, ip: IpAddr) {
+    fn track(&self, key: T) {
         self.clear_if_window_passed();
-        if let Some(mut count) = self.storage.get_mut(&ip) {
+        if let Some(mut count) = self.storage.get_mut(&key) {
             *count += 1;
         } else {
-            self.storage.insert(ip, 1);
+            self.storage.insert(key, 1);
         }
     }
 }
