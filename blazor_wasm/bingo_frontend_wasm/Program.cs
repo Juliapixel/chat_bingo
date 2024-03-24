@@ -37,12 +37,12 @@ class Program
         if (builder.HostEnvironment.IsDevelopment())
         {
             ENVIRONMENT = ENVIRONMENT_FLAG.DEVELOPMENT;
-            Console.WriteLine($"Development version {VERSIONNAME} {GITHASH} built {COMMITDATE}");
+            Console.WriteLine($"Development version {VERSIONNAME} {GITHASH} {COMMITDATE}");
         }
         else
         {
             ENVIRONMENT = ENVIRONMENT_FLAG.PRODUCTION;
-            Console.WriteLine($"Production version {VERSIONNAME} {GITHASH} built {COMMITDATE}");
+            Console.WriteLine($"Production version {VERSIONNAME} {GITHASH} {COMMITDATE}");
         }
 
         await builder.Build().RunAsync();
