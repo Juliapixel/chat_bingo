@@ -113,7 +113,6 @@ async fn main() {
             .app_data(manager.clone())
             .app_data(db_pool.clone())
             .wrap(Prometheus::new())
-            .wrap(TwitchAuthMiddleware::default())
             .wrap(
                 Cors::default()
                     .allow_any_header()
