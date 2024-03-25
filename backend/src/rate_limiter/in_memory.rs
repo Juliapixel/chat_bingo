@@ -47,7 +47,7 @@ impl<T: FromRequest + Hash + Eq> InMemory<T> {
 
     fn clear_if_window_passed(&self) {
         if Instant::now() > *self.window_start.read() + self.window_size {
-            self.storage.retain(|_, _| false);
+            self.storage.clear();
             *self.window_start.write() = Instant::now();
         }
     }
